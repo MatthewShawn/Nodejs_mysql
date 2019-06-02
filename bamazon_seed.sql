@@ -18,4 +18,6 @@ VALUES (8, "Beets", "Food Things", 1.99, 20000);
 INSERT INTO bamazon.products (item_id, product_name, department_name, price, stock_quantity)
 VALUES (9, "Balls", "Round Things", 15.67, 20000);
 INSERT INTO bamazon.products (item_id, product_name, department_name, price, stock_quantity)
-VALUES (10, "Hampsters", "Animal Things", 5.67, 200);
+VALUES (10, "Hamsters", "Animal Things", 5.67, 200);
+
+UPDATE products SET stock_quantity = stock_quantity - 4 WHERE item_id = 10 AND stock_quantity >0;
