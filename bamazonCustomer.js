@@ -46,9 +46,9 @@ function makeInquiry() {
         .then(function(inquirerResponse) {
             // If the inquirerResponse confirms, we displays the inquirerResponse's username and pokemon from the answers.
             itemSelectedIndex = -1;
-            console.log("dbjson.length: " + dbjson.length);
-            console.log("Inquiry product id: " + inquirerResponse.productname);
-            console.log("dbjson zero item id: " + dbjson[0].item_id);
+            //console.log("dbjson.length: " + dbjson.length);
+            //console.log("Inquiry product id: " + inquirerResponse.productname);
+            //console.log("dbjson zero item id: " + dbjson[0].item_id);
             if (inquirerResponse.confirm) {
                 for (var i = 0; i < dbjson.length; i++) {
                     if (parseInt(dbjson[i].item_id) === parseInt(inquirerResponse.productname)) {
@@ -66,7 +66,7 @@ function makeInquiry() {
                 processPurchase(itemSelectedIndex, inquirerResponse.productquantity);
                 return;
             } else {
-                console.log("\nThat's okay, " + inquirerResponse.productname + " may still be here when you want it.\n");
+                console.log("\nThat's okay, our stocks replenish regularly!\n");
             }
 
             connection.end();
@@ -83,8 +83,8 @@ connection.connect(function(err) {
 
 function processPurchase(index, numOf) {
     // Using the already loaded json, determine if the purchase is valid
-    // calculate the price and update the actual database.
-    // at the end run listAndInquire to show updated numbers allow it to refresh
+    // calculate the price and update the database.
+    // at the end run listAndInquire to show updated numbers and allow it to refresh
     // the local json.
     // Remember that the db call could still FAIL, because a different user
     // could have purchased all the items listed.
@@ -103,27 +103,25 @@ function processPurchase(index, numOf) {
     var query = connection.query(
         "UPDATE products SET stock_quantity = stock_quantity-" + numOf +
         " WHERE item_id = " + dbjsonItemId + " AND stock_quantity-" + numOf +
-        " >= 0", //[{
-        /*        stock_quantity: stock_quantity - numOf
-            },
-            {
-                item_id: dbjson[index].item_id
-            }
-        ],*/
+        " >= 0",
         function(err, res) {
+            // If the user puts in an non-existen item-id here, then we will see
+            // an unhandled exception thown in the output.
             if (err) throw err;
-            console.log(res.affectedRows + " products updated!\n");
+            //console.log(res.affectedRows + " products updated!\n");
             console.log("You purchased " + numOf + " " + dbjson[index].product_name +
                 " at $" + dbjson[index].price + ", for a total cost of $" +
                 numOf * dbjson[index].price);
-            // Call listAndInquire AFTER the UPDATE completes
+            // Call listAndInquire AFTER the UPDATE completes...meaning the callback funtion
             listAndInquire();
         }
     );
 
     // logs the actual query being run
+    // This would not be used for any sort of production code, but for a 
+    // class assignment, it provides value.
     console.log(query.sql);
-    //listAndInquire(); // temporary position, I think.
+
 }
 
 function listAndInquire() {
